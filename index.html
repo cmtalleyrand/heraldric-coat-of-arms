@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Heraldric Coat of Arms</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="intro">
+      <p class="eyebrow">Historically inspired heraldry studio</p>
+      <h1>Forge a medieval coat of arms</h1>
+      <p>Compose a shield from classic tinctures, ordinaries, charges, and layouts. The preview updates as a deterministic SVG, so every option maps directly to visible geometry.</p>
+    </section>
+    <section class="workspace">
+      <form id="arms-form" class="panel">
+        <label>Field tincture<select id="field" name="field"></select></label>
+        <label>Ordinary<select id="ordinary" name="ordinary"></select></label>
+        <label>Ordinary tincture<select id="ordinaryTincture" name="ordinaryTincture"></select></label>
+        <label>Charge<select id="charge" name="charge"></select></label>
+        <label>Charge tincture<select id="chargeTincture" name="chargeTincture"></select></label>
+        <label>Charge layout<select id="layout" name="layout"></select></label>
+        <label>Motto<input name="motto" maxlength="40" value="Fortune Favours the Bold"></label>
+        <p id="warning" class="warning">Historical note: metal-on-metal or colour-on-colour combinations weaken contrast under the rule of tincture.</p>
+      </form>
+      <article class="preview-card">
+        <div id="preview" class="preview"></div>
+        <h2>Blazon draft</h2>
+        <p id="blazon"></p>
+      </article>
+    </section>
+  </main>
+  <script src="src/heraldry.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
