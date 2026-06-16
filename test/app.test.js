@@ -143,23 +143,14 @@ test('select change events refresh the preview', () => {
   assert.match(nodes.get('#preview').innerHTML, /🦅/);
 });
 
-test('custom select menu opens and writes through to native select', () => {
-  const { context, nodes } = createContext();
+test('native select input events refresh the preview', () => {
+  const { context, listeners, state, nodes } = createContext();
 
   vm.runInNewContext(readFileSync('src/app.js', 'utf8'), context);
-  const select = nodes.get('#charge');
-  const dropdown = select.afterNode;
-  const trigger = dropdown.children[0];
-  const list = dropdown.children[1];
+  const originalPreview = nodes.get('#preview').innerHTML;
 
-  trigger.listeners.get('click')();
-  assert.equal(dropdown.classList.contains('is-open'), true);
-  assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+  state.field = 'azure';
+  listeners.get('input')({});
 
-  const eagle = list.children.find(item => item.textContent === 'Eagle displayed');
-  eagle.listeners.get('click')();
-
-  assert.equal(select.value, 'eagle');
-  assert.equal(trigger.textContent, 'Eagle displayed');
-  assert.equal(dropdown.classList.contains('is-open'), false);
+  assert.notEqual(nodes.get('#preview').innerHTML, originalPreview);
 });
