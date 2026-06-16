@@ -190,3 +190,74 @@ input:focus {
     grid-template-columns: 1fr;
   }
 }
+
+.native-select {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.select-menu {
+  position: relative;
+}
+
+.select-menu__trigger,
+.select-menu__option {
+  width: 100%;
+  border: 1px solid #9f6b2d;
+  color: #2a170e;
+  background: #f7ead2;
+  font: 1rem Georgia, serif;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.select-menu__trigger {
+  min-height: 48px;
+  border-radius: 12px;
+  padding: 12px 42px 12px 14px;
+}
+
+.select-menu__trigger::after {
+  content: '▾';
+  position: absolute;
+  right: 14px;
+}
+
+.select-menu__list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  display: none;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid #9f6b2d;
+  border-radius: 12px;
+  background: #f7ead2;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .35);
+}
+
+.select-menu.is-open .select-menu__list {
+  display: block;
+}
+
+.select-menu__option {
+  min-height: 44px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  padding: 12px 14px;
+}
+
+.select-menu__option:last-child {
+  border-bottom-width: 0;
+}
+
+.select-menu__option:focus,
+.select-menu__trigger:focus {
+  outline: 3px solid rgba(243, 212, 139, .55);
+  outline-offset: 2px;
+}
