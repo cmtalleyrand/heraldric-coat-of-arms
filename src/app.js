@@ -32,5 +32,6 @@ function update() {
 
 populate();
 form.addEventListener('input', update);
+form.addEventListener('change', update);
 form.addEventListener('submit', event => event.preventDefault());
 update();
