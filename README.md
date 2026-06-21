@@ -13,7 +13,9 @@ Open `index.html` directly for quick local viewing, or serve `dist/` after a bui
 
 ## GitHub Pages deployment
 
-The repository includes a GitHub Actions workflow at `.github/workflows/deploy-pages.yml`. It tests the app, builds the static files into `dist/`, uploads the artifact, and deploys it to GitHub Pages on pushes to `main`, `master`, or `work`, or from a manual workflow dispatch.
+The repository includes a single GitHub Actions workflow at `.github/workflows/deploy-pages.yml`. It tests the app, builds the static files into `dist/`, uploads the artifact, and deploys it to GitHub Pages on pushes to `main` or from a manual workflow dispatch.
+
+The build stamps a content-hash version query (`?v=…`) onto every script and stylesheet reference in `dist/index.html`. This busts browser caches on each deploy, so a code change is guaranteed to reach every visitor — including Chrome for Android, which otherwise keeps executing a previously cached `app.js`.
 
 To make the deploy button appear in GitHub:
 
@@ -22,4 +24,4 @@ To make the deploy button appear in GitHub:
 3. Set **Build and deployment → Source** to **GitHub Actions**.
 4. Open **Actions → Deploy to GitHub Pages → Run workflow**.
 
-Pushing to `main`, `master`, or `work` also runs the same deployment pipeline automatically.
+Pushing to `main` also runs the same deployment pipeline automatically.
