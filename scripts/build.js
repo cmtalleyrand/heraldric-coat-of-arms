@@ -1,14 +1,13 @@
-const { copyFileSync, mkdirSync, rmSync, readdirSync, statSync } = require('node:fs');
+const { copyFileSync, mkdirSync, rmSync, readdirSync, statSync, readFileSync, writeFileSync } = require('node:fs');
 const { join } = require('node:path');
+const { createHash } = require('node:crypto');
 
 const root = process.cwd();
 const dist = join(root, 'dist');
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(dist, { recursive: true });
 
-for (const file of ['index.html', 'styles.css']) {
-  copyFileSync(join(root, file), join(dist, file));
-}
+copyFileSync(join(root, 'styles.css'), join(dist, 'styles.css'));
 
 function copyDir(from, to) {
   mkdirSync(to, { recursive: true });
@@ -21,4 +20,21 @@ function copyDir(from, to) {
 }
 
 copyDir(join(root, 'src'), join(dist, 'src'));
-console.log('Built static site into dist/');
+
+// Cache-busting: derive a version from the assets that affect behaviour, then
+// stamp it onto every reference in index.html. GitHub Pages serves JS/CSS with
+// long-lived caching, so without a changing URL mobile browsers (especially
+// Chrome for Android via bfcache) keep executing the previously cached app.js.
+// A content hash guarantees every deploy ships a fresh URL.
+const assets = ['styles.css', 'src/heraldry.js', 'src/app.js'];
+const hash = createHash('sha256');
+for (const asset of assets) hash.update(readFileSync(join(root, asset)));
+const version = hash.digest('hex').slice(0, 8);
+
+let html = readFileSync(join(root, 'index.html'), 'utf8');
+for (const asset of assets) {
+  html = html.replace(`"${asset}"`, `"${asset}?v=${version}"`);
+}
+writeFileSync(join(dist, 'index.html'), html);
+
+console.log(`Built static site into dist/ (asset version ${version})`);
