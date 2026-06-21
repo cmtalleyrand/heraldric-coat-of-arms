@@ -14,20 +14,21 @@ function build() {
 test('built index.html cache-busts every behavioural asset', () => {
   const html = build();
 
-  for (const asset of ['styles.css', 'src/heraldry.js', 'src/app.js']) {
-    assert.match(html, new RegExp(`"${asset.replace('.', '\\.')}\\?v=[0-9a-f]{8}"`),
+  for (const asset of ['styles.css', 'src/data/tinctures.js', 'src/engine.js', 'src/heraldry.js', 'src/app.js']) {
+    assert.match(html, new RegExp(`"${asset.replace(/[./]/g, m => '\\' + m)}\\?v=[0-9a-f]{8}"`),
       `${asset} should carry a version query so caches refetch after a deploy`);
   }
 
   assert.ok(existsSync(join(root, 'dist', 'src', 'app.js')));
   assert.ok(existsSync(join(root, 'dist', 'styles.css')));
+  assert.ok(existsSync(join(root, 'dist', 'src', 'charges', 'lionRampant.svg')), 'charges copied to dist');
 });
 
 test('the asset version is shared and content-derived', () => {
   const html = build();
   const versions = [...html.matchAll(/\?v=([0-9a-f]{8})/g)].map(match => match[1]);
 
-  assert.equal(versions.length, 3);
+  assert.equal(versions.length, 8);
   assert.equal(new Set(versions).size, 1, 'all assets share one deploy version');
 
   // Rebuilding identical sources must reproduce the same version (deterministic),

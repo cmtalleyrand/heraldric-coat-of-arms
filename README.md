@@ -1,27 +1,47 @@
-# Heraldric Coat of Arms
+# Heraldic Coat of Arms Studio
 
-A static medieval-style heraldry studio for composing a coat of arms from historically inspired tinctures, ordinaries, charges, layouts, and a motto.
+A static, dependency-free studio for composing heraldic arms — from a single
+charge on a plain field up to deeply marshalled achievements like the arms of
+Charles V (quarterings nested several levels deep, field variations, ordinaries,
+inescutcheons and enté-en-point).
+
+## How it works
+
+A coat of arms is a **recursive tree of regions**. Every node is either:
+
+- a **leaf**: a field (`plain` / `paly` / `barry` / `bendy` / `chequy` / `semy`)
+  with optional ordinaries and charges; or
+- a **marshalling** node: a partition (`perPale`, `perFess`, `quarterly`,
+  `perSaltire`, `perBend`, `perChevron`, `ente`, `grid`) whose parts are
+  themselves full nodes.
+
+Any node may also carry an **inescutcheon**. This single schema is what the
+freeform editor edits and what the renderer walks — Charles V is just the schema
+exercised deeply, not a special case.
+
+The rendering engine (shield geometry, tincture palette, charge placement) is
+adapted from [Armoria](https://github.com/Azgaar/Armoria) (MIT), with a recursive
+marshalling layer added on top.
+
+## Charge artwork & licensing
+
+Charge SVGs are vendored from Armoria. Simple charges are **CC0**; the complex
+charges originate from [WappenWiki](http://wappenwiki.org) under
+**CC BY-NC(-SA) 3.0 — non-commercial use only**. See [`NOTICE.md`](NOTICE.md) for
+the per-charge breakdown and attribution.
 
 ## Local development
 
 ```bash
-npm test
-npm run build
+npm test        # engine + build tests
+npm run build   # static build into dist/
 ```
 
-Open `index.html` directly for quick local viewing, or serve `dist/` after a build.
+Open `index.html` directly for a quick look, or serve `dist/` after a build.
 
-## GitHub Pages deployment
+## Deployment
 
-The repository includes a single GitHub Actions workflow at `.github/workflows/deploy-pages.yml`. It tests the app, builds the static files into `dist/`, uploads the artifact, and deploys it to GitHub Pages on pushes to `main` or from a manual workflow dispatch.
-
-The build stamps a content-hash version query (`?v=…`) onto every script and stylesheet reference in `dist/index.html`. This busts browser caches on each deploy, so a code change is guaranteed to reach every visitor — including Chrome for Android, which otherwise keeps executing a previously cached `app.js`.
-
-To make the deploy button appear in GitHub:
-
-1. Merge the workflow file into the repository's default branch. GitHub only lists manual `workflow_dispatch` actions after the workflow exists on the default branch.
-2. In GitHub, open **Settings → Pages**.
-3. Set **Build and deployment → Source** to **GitHub Actions**.
-4. Open **Actions → Deploy to GitHub Pages → Run workflow**.
-
-Pushing to `main` also runs the same deployment pipeline automatically.
+A GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) tests, builds,
+and deploys to GitHub Pages on pushes to `main`. The build stamps a content-hash
+`?v=` onto every script/stylesheet so a deploy always reaches every browser
+(including Chrome for Android, which otherwise serves a cached bundle).

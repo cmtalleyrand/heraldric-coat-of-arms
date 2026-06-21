@@ -1,90 +1,119 @@
-const tinctures = {
-  gules: { label: 'Gules', hex: '#9f1d20', metal: false },
-  azure: { label: 'Azure', hex: '#174a8b', metal: false },
-  sable: { label: 'Sable', hex: '#161311', metal: false },
-  vert: { label: 'Vert', hex: '#1f6f43', metal: false },
-  purpure: { label: 'Purpure', hex: '#63316f', metal: false },
-  argent: { label: 'Argent', hex: '#e8e4d4', metal: true },
-  or: { label: 'Or', hex: '#d4a62a', metal: true }
-};
+// Public aggregator. Wires the ported data layer + engine together and handles
+// charge-source loading (filesystem under Node for tests, fetch in the browser).
 
-const ordinaries = {
-  none: { label: 'None', path: '' },
-  chief: { label: 'Chief', path: '<rect x="110" y="62" width="260" height="80" />' },
-  pale: { label: 'Pale', path: '<rect x="205" y="62" width="70" height="318" />' },
-  fess: { label: 'Fess', path: '<rect x="110" y="188" width="260" height="70" />' },
-  bend: { label: 'Bend', path: '<polygon points="132,62 190,62 370,330 370,380 330,380 110,112 110,62" />' },
-  chevron: { label: 'Chevron', path: '<polygon points="110,280 240,140 370,280 332,318 240,220 148,318" />' },
-  cross: { label: 'Cross', path: '<rect x="205" y="62" width="70" height="318" /><rect x="110" y="188" width="260" height="70" />' },
-  saltire: { label: 'Saltire', path: '<polygon points="126,62 240,176 354,62 370,62 370,126 276,220 370,314 370,380 354,380 240,264 126,380 110,380 110,314 204,220 110,126 110,62" />' }
-};
+const isNode = typeof require !== 'undefined';
+const TINCT = isNode ? require('./data/tinctures') : window.heraldryTinctures;
+const SH = isNode ? require('./data/shields') : window.heraldryShields;
+const MANIFEST = isNode ? require('./data/charges') : window.heraldryChargeManifest;
+const PRESETS = isNode ? require('./presets') : window.heraldryPresets;
+const engine = isNode ? require('./engine') : window.heraldryEngine;
 
-const charges = {
-  lion: { label: 'Lion rampant', glyph: '♌' },
-  eagle: { label: 'Eagle displayed', glyph: '🦅' },
-  fleur: { label: 'Fleur-de-lis', glyph: '⚜' },
-  rose: { label: 'Rose', glyph: '✹' },
-  tower: { label: 'Tower', glyph: '♜' },
-  star: { label: 'Estoile', glyph: '✦' },
-  stag: { label: 'Stag', glyph: '♞' },
-  dragon: { label: 'Dragon', glyph: '❧' }
-};
+const chargeCache = {};
 
-const chargeLayouts = {
-  one: [{ x: 240, y: 222, size: 112 }],
-  two: [{ x: 240, y: 162, size: 82 }, { x: 240, y: 282, size: 82 }],
-  three: [{ x: 240, y: 145, size: 76 }, { x: 188, y: 270, size: 76 }, { x: 292, y: 270, size: 76 }],
-  semy: [
-    { x: 170, y: 138, size: 44 }, { x: 240, y: 138, size: 44 }, { x: 310, y: 138, size: 44 },
-    { x: 150, y: 220, size: 44 }, { x: 220, y: 220, size: 44 }, { x: 290, y: 220, size: 44 },
-    { x: 190, y: 302, size: 44 }, { x: 260, y: 302, size: 44 }, { x: 330, y: 302, size: 44 }
-  ]
-};
-
-function esc(value) {
-  return String(value).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+// Node: read vendored SVGs from disk. Browser uses loadCharges() below.
+function readChargeSource(name) {
+  if (chargeCache[name] !== undefined) return chargeCache[name];
+  if (isNode) {
+    const fs = require('fs');
+    const path = require('path');
+    try {
+      chargeCache[name] = fs.readFileSync(path.join(__dirname, 'charges', `${name}.svg`), 'utf8');
+    } catch (e) {
+      chargeCache[name] = null;
+    }
+    return chargeCache[name];
+  }
+  return chargeCache[name] || null;
 }
 
-function normalizeOptions(input = {}) {
-  const field = tinctures[input.field] ? input.field : 'gules';
-  const ordinary = ordinaries[input.ordinary] ? input.ordinary : 'chevron';
-  const ordinaryTincture = tinctures[input.ordinaryTincture] ? input.ordinaryTincture : 'or';
-  const charge = charges[input.charge] ? input.charge : 'lion';
-  const chargeTincture = tinctures[input.chargeTincture] ? input.chargeTincture : 'argent';
-  const layout = chargeLayouts[input.layout] ? input.layout : 'one';
-  const motto = String(input.motto || 'Fortune Favours the Bold').slice(0, 40);
-  return { field, ordinary, ordinaryTincture, charge, chargeTincture, layout, motto };
+function chargeNames(tree) {
+  return [...engine.collectCharges(tree, new Set())];
 }
 
-function violatesRuleOfTincture(options) {
-  const normalized = normalizeOptions(options);
-  const fieldMetal = tinctures[normalized.field].metal;
-  const ordinaryMetal = tinctures[normalized.ordinaryTincture].metal;
-  const chargeMetal = tinctures[normalized.chargeTincture].metal;
-  return fieldMetal === ordinaryMetal || fieldMetal === chargeMetal;
+// Browser: fetch all charge sources referenced by a tree, populate the cache.
+async function loadCharges(tree) {
+  if (isNode) { chargeNames(tree).forEach(readChargeSource); return; }
+  const names = chargeNames(tree).filter(n => chargeCache[n] === undefined);
+  await Promise.all(names.map(async name => {
+    try {
+      const res = await fetch(`src/charges/${name}.svg`);
+      chargeCache[name] = res.ok ? await res.text() : null;
+    } catch (e) {
+      chargeCache[name] = null;
+    }
+  }));
 }
 
-function renderCoatOfArms(options = {}) {
-  const o = normalizeOptions(options);
-  const field = tinctures[o.field];
-  const ordinaryTincture = tinctures[o.ordinaryTincture];
-  const chargeTincture = tinctures[o.chargeTincture];
-  const charge = charges[o.charge];
-  const positions = chargeLayouts[o.layout];
-  const ordinaryShape = ordinaries[o.ordinary].path;
-  const chargeNodes = positions.map(pos => `<text x="${pos.x}" y="${pos.y}" text-anchor="middle" dominant-baseline="middle" font-size="${pos.size}" fill="${chargeTincture.hex}" stroke="#2a170e" stroke-width="1.5">${charge.glyph}</text>`).join('');
-  const ordinaryNode = ordinaryShape ? `<g fill="${ordinaryTincture.hex}" stroke="#2a170e" stroke-width="4">${ordinaryShape}</g>` : '';
-  return `<svg viewBox="0 0 480 560" role="img" aria-label="${esc(field.label)} shield bearing ${esc(charge.label)}" xmlns="http://www.w3.org/2000/svg">
-    <defs><clipPath id="shield"><path d="M110 62 H370 V278 C370 354 307 420 240 462 C173 420 110 354 110 278 Z" /></clipPath></defs>
-    <rect width="480" height="560" fill="#24150e" />
-    <path d="M110 62 H370 V278 C370 354 307 420 240 462 C173 420 110 354 110 278 Z" fill="${field.hex}" stroke="#f3d48b" stroke-width="10" />
-    <g clip-path="url(#shield)">${ordinaryNode}${chargeNodes}</g>
-    <path d="M110 62 H370 V278 C370 354 307 420 240 462 C173 420 110 354 110 278 Z" fill="none" stroke="#2a170e" stroke-width="4" />
-    <path d="M92 486 C164 522 316 522 388 486 L364 536 C292 510 188 510 116 536 Z" fill="#d4a62a" stroke="#2a170e" stroke-width="4" />
-    <text x="240" y="517" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#2a170e">${esc(o.motto)}</text>
-  </svg>`;
+function sourcesFor(tree) {
+  const out = {};
+  chargeNames(tree).forEach(name => {
+    const src = isNode ? readChargeSource(name) : chargeCache[name];
+    if (src) out[name] = src;
+  });
+  return out;
 }
 
-const api = { tinctures, ordinaries, charges, chargeLayouts, normalizeOptions, violatesRuleOfTincture, renderCoatOfArms };
+function renderCoatOfArms(tree, sources) {
+  return engine.renderArms(tree, { chargeSources: sources || sourcesFor(tree) }).svg;
+}
+
+// Walk leaves; flag colour-on-colour / metal-on-metal of a charge over its field.
+function violatesRuleOfTincture(tree) {
+  let bad = false;
+  (function walk(n) {
+    if (!n) return;
+    if (n.parts) return n.parts.forEach(walk), n.inescutcheon && walk(n.inescutcheon);
+    if (n.field && n.field.type === 'plain') {
+      const f = n.field.tinctures[0];
+      const over = [...(n.charges || []).map(c => c.t), ...(n.ordinaries || []).map(o => o.t)]
+        .filter(t => TINCT.tinctures[t] && TINCT.tinctures[t].kind !== 'proper');
+      if (TINCT.tinctures[f] && over.some(t => TINCT.isMetal(t) === TINCT.isMetal(f))) bad = true;
+    }
+    if (n.inescutcheon) walk(n.inescutcheon);
+  })(tree);
+  return bad;
+}
+
+function tinctureLabel(t) { return TINCT.tinctures[t] ? TINCT.tinctures[t].label : t; }
+const PARTITION_LABELS = {
+  perPale: 'Per pale', perFess: 'Per fess', perBend: 'Per bend', perChevron: 'Per chevron',
+  perSaltire: 'Per saltire', quarterly: 'Quarterly', grid: 'Quarterly', ente: 'Enté en point'
+};
+
+function blazon(tree) {
+  function field(f) {
+    if (!f) return 'a field';
+    if (f.type === 'plain') return tinctureLabel(f.tinctures[0]);
+    if (f.type === 'semy') return `${tinctureLabel(f.tinctures[0])} semy`;
+    return `${f.type} ${f.tinctures.map(tinctureLabel).join(' and ')}`;
+  }
+  function describe(n) {
+    if (!n) return '';
+    if (n.parts) return `${PARTITION_LABELS[n.partition] || n.partition} (${n.parts.map(describe).join('; ')})` +
+      (n.inescutcheon ? `, overall ${describe(n.inescutcheon)}` : '');
+    let s = field(n.field);
+    const ch = (n.charges || []).map(c => `${(MANIFEST.charges[c.charge] || {}).label || c.charge} ${tinctureLabel(c.t)}`);
+    if (ch.length) s += ', ' + ch.join(' and ');
+    if (n.inescutcheon) s += ', overall an inescutcheon ' + describe(n.inescutcheon);
+    return s;
+  }
+  return describe(tree) + '.';
+}
+
+const api = {
+  tinctures: TINCT.tinctures,
+  shields: SH.shields,
+  shieldLabels: SH.shieldLabels,
+  chargeManifest: MANIFEST.charges,
+  chargeCategories: MANIFEST.categories,
+  presets: PRESETS.presets,
+  chargeCache,
+  chargeNames,
+  loadCharges,
+  renderCoatOfArms,
+  violatesRuleOfTincture,
+  blazon
+};
+
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
-if (typeof window !== 'undefined') window.heraldry = api;
+if (typeof window !== 'undefined') window.heraldry = Object.assign(window.heraldry || {}, api);
