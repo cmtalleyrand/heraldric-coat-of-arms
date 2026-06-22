@@ -16,8 +16,13 @@ const GRID = {
   g: [-50, 50], h: [0, 50], i: [50, 50]
 };
 
-const CHARGE_FILL = 1.5;   // scale so a centred charge fills its region
+// Charge artwork is centred near (100,100) and spans roughly ART_EXTENT units.
+const ART_EXTENT = 132;
+const ART_CENTER = 100;
+const CHARGE_PAD = 0.92;     // fraction of the cell a charge fills
+const STRETCH_CAP = 1.7;     // max non-uniform stretch in narrow cells
 const OUTLINE = '#1a1713';
+const LINE = '#15110c';      // division lines between cells
 
 function box(x, y, w, h) { return { x, y, w, h }; }
 function rectPath(b) { return `M${b.x} ${b.y}H${b.x + b.w}V${b.y + b.h}H${b.x}Z`; }
@@ -107,8 +112,9 @@ function renderField(field, b, ctx) {
       for (let y = b.y + sz * 0.3; y < b.y + b.h - sz * 0.3; y += stepY) {
         const off = (row % 2) * (stepX / 2);
         for (let x = b.x - stepX + off; x < b.x + b.w; x += stepX) {
-          out += placeCharge(field.semyCharge, [field.semyTincture || 'or'], null, null,
-            { x: x + sz / 2, y: y + sz / 2 }, sz / 200 * 1.6, ctx);
+          const s = (sz * 1.3) / ART_EXTENT;
+          out += placeCharge(field.semyCharge, [field.semyTincture || 'or'], null, {},
+            { x: x + sz / 2, y: y + sz / 2 }, s, s, ctx);
         }
         row++;
       }
@@ -151,29 +157,39 @@ function renderOrdinary(o, b) {
 
 // --- Charges --------------------------------------------------------------------
 
-function placeCharge(name, tinctures, stroke, opts, target, scale, ctx) {
+function placeCharge(name, tinctures, stroke, opts, target, sx, sy, ctx) {
   ctx.used.add(name);
   const t = hex(tinctures[0]);
   const t2 = tinctures[1] ? hex(tinctures[1]) : t;
   const t3 = tinctures[2] ? hex(tinctures[2]) : t;
   const strk = stroke || OUTLINE;
-  const tx = target.x - 100 * scale, ty = target.y - 100 * scale;
-  return `<g fill="${t}" stroke="${strk}" ` +
+  const tx = target.x - ART_CENTER * sx, ty = target.y - ART_CENTER * sy;
+  return `<g fill="${t}" stroke="${strk}" stroke-width="${(0.7 / ((sx + sy) / 2)).toFixed(2)}" ` +
     `style="--secondary:${t2};--tertiary:${t3};--stroke:${strk}">` +
-    `<use href="#ch_${name}" xlink:href="#ch_${name}" transform="translate(${tx} ${ty}) scale(${scale})"/></g>`;
+    `<use href="#ch_${name}" xlink:href="#ch_${name}" transform="translate(${tx} ${ty}) scale(${sx} ${sy})"/></g>`;
+}
+
+// Charges fill their cell: scale to the cell with padding, allowing bounded
+// non-uniform stretch (real heraldry stretches charges in narrow divisions).
+function chargeScale(b, sizeMod, divisor) {
+  let sx = (b.w * CHARGE_PAD) / ART_EXTENT * sizeMod / divisor;
+  let sy = (b.h * CHARGE_PAD) / ART_EXTENT * sizeMod / divisor;
+  if (sy > sx * STRETCH_CAP) sy = sx * STRETCH_CAP;
+  if (sx > sy * STRETCH_CAP) sx = sy * STRETCH_CAP;
+  return { sx, sy };
 }
 
 function renderCharges(charge, b, ctx) {
   const positions = (charge.p || 'e').split('').filter(p => GRID[p]);
   if (!positions.length) positions.push('e');
   const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
-  const sizeMod = charge.size || 1;
-  const scale = (Math.min(b.w, b.h) / 200) * CHARGE_FILL * sizeMod / (positions.length > 1 ? 2 : 1);
+  const divisor = positions.length > 1 ? Math.ceil(Math.sqrt(positions.length)) : 1;
+  const { sx, sy } = chargeScale(b, charge.size || 1, divisor);
   const tinctures = [charge.t, charge.t2, charge.t3].filter(Boolean);
   return positions.map(p => {
     const [ox, oy] = GRID[p];
     const target = { x: cx + ox * (b.w / 200), y: cy + oy * (b.h / 200) };
-    return placeCharge(charge.charge, tinctures, charge.stroke, charge, target, scale, ctx);
+    return placeCharge(charge.charge, tinctures, charge.stroke, charge, target, sx, sy, ctx);
   }).join('');
 }
 
@@ -238,12 +254,17 @@ function renderNode(node, b, ctx) {
     const regions = node.partition === 'grid'
       ? gridBoxes(b, node.rows || 2, node.cols || 2)
       : splitBox(b, node.partition);
+    const lw = Math.max(0.7, Math.min(b.w, b.h) * 0.022);
     node.parts.forEach((child, i) => {
       const region = regions[i];
       if (!region) return;
       const childClip = `clip${clipCounter++}`;
       ctx.defs.push(`<clipPath id="${childClip}"><path d="${region.clip}"/></clipPath>`);
       inner += `<g clip-path="url(#${childClip})">${renderNode(child, region.box, ctx)}</g>`;
+    });
+    // division lines between cells (drawn over the children for legibility)
+    regions.forEach(region => {
+      if (region) inner += `<path d="${region.clip}" fill="none" stroke="${LINE}" stroke-width="${lw.toFixed(2)}"/>`;
     });
   } else {
     inner += renderField(node.field, b, ctx);
@@ -252,13 +273,15 @@ function renderNode(node, b, ctx) {
   }
 
   if (node.inescutcheon) {
-    const iw = b.w * 0.44, ih = iw * 1.16;
-    const ib = box(b.x + b.w / 2 - iw / 2, b.y + b.h / 2 - ih * 0.46, iw, ih);
-    const tf = `translate(${ib.x} ${ib.y}) scale(${ib.w / 200} ${ib.h / 200})`;
+    const bb = ctx.shieldBBox;
+    const iw = b.w * 0.44, ih = iw * (bb.h / bb.w);
+    const ix = b.x + b.w / 2 - iw / 2, iy = b.y + b.h / 2 - ih * 0.46;
+    const sxx = iw / bb.w, syy = ih / bb.h;
+    const tf = `translate(${(ix - bb.x * sxx).toFixed(3)} ${(iy - bb.y * syy).toFixed(3)}) scale(${sxx.toFixed(4)} ${syy.toFixed(4)})`;
     const ic = `clip${clipCounter++}`;
     ctx.defs.push(`<clipPath id="${ic}"><path d="${ctx.shieldPath}" transform="${tf}"/></clipPath>`);
-    inner += `<g clip-path="url(#${ic})"><g transform="${tf}">${renderNode(node.inescutcheon, box(0, 0, 200, 200), ctx)}</g></g>`;
-    inner += `<path d="${ctx.shieldPath}" transform="${tf}" fill="none" stroke="${OUTLINE}" stroke-width="3"/>`;
+    inner += `<g clip-path="url(#${ic})"><g transform="${tf}">${renderNode(node.inescutcheon, box(bb.x, bb.y, bb.w, bb.h), ctx)}</g></g>`;
+    inner += `<path d="${ctx.shieldPath}" transform="${tf}" fill="none" stroke="${OUTLINE}" stroke-width="${(2 / sxx).toFixed(2)}"/>`;
   }
   return `<g clip-path="url(#${clipId})">${inner}</g>`;
 }
@@ -272,7 +295,11 @@ function renderArms(tree, options) {
   const shieldDef = SH.shields[shieldName] || SH.shields.spanish;
   const ctx = { defs: [], used: new Set(), shield: shieldName, shieldPath: shieldDef.path, sources: opts.chargeSources || {} };
 
-  const fullBox = box(0, 0, 200, 200);
+  // Fit marshalling to the shield's drawable area so divisions align to and fill
+  // whatever shield is selected (works for any shield type).
+  const bb = shieldDef.bbox || { x: 0, y: 0, w: 200, h: 200 };
+  ctx.shieldBBox = bb;
+  const fullBox = box(bb.x, bb.y, bb.w, bb.h);
   const shieldId = 'shield';
   const body = renderNode(tree, fullBox, ctx);
 

@@ -22,8 +22,8 @@ test('Charles V exercises the full engine (depth, charges, inescutcheon)', () =>
   assert.ok((svg.match(/<use /g) || []).length > 30, 'many charge instances');
   // deep nesting yields many clip regions
   assert.ok((svg.match(/clipPath/g) || []).length > 100, 'deep clip nesting');
-  // inescutcheon present (Flanders/Tyrol) -> escutcheon-shaped clip transform
-  assert.match(svg, /scale\(/);
+  // charges fill cells with a (possibly non-uniform) scale
+  assert.match(svg, /scale\([0-9.]+ [0-9.]+\)/, 'charge fill scale present');
 });
 
 test('marshalling splits a quarterly node into four clipped regions', () => {
@@ -37,6 +37,20 @@ test('marshalling splits a quarterly node into four clipped regions', () => {
   // four quarter fills with the four tinctures
   for (const t of ['gules', 'or', 'azure', 'argent']) {
     assert.ok(svg.includes(h.tinctures[t].hex), `${t} fill present`);
+  }
+  // division lines drawn between cells
+  assert.match(svg, /stroke="#15110c"/, 'division lines present');
+});
+
+test('the same coat fits every shield type via per-shield bbox', () => {
+  for (const sh of Object.keys(h.shields)) {
+    assert.ok(h.shields[sh].bbox, `${sh} has a bbox`);
+    const svg = h.renderCoatOfArms({ shield: sh, partition: 'perPale', parts: [
+      { field: { type: 'plain', tinctures: ['gules'] } },
+      { field: { type: 'plain', tinctures: ['or'] } }
+    ] });
+    assert.match(svg, /^<svg /, `${sh} renders`);
+    assert.match(svg, /stroke="#15110c"/, `${sh} has a division line`);
   }
 });
 
