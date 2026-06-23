@@ -38,8 +38,18 @@ test('marshalling splits a quarterly node into four clipped regions', () => {
   for (const t of ['gules', 'or', 'azure', 'argent']) {
     assert.ok(svg.includes(h.tinctures[t].hex), `${t} fill present`);
   }
-  // division lines drawn between cells
-  assert.match(svg, /stroke="#2b2218"/, 'division lines present');
+});
+
+test('division lines appear ONLY between same-coloured neighbours', () => {
+  const distinct = h.renderCoatOfArms({ shield: 'heater', partition: 'quarterly', parts: [
+    { field: { type: 'plain', tinctures: ['gules'] } }, { field: { type: 'plain', tinctures: ['or'] } },
+    { field: { type: 'plain', tinctures: ['azure'] } }, { field: { type: 'plain', tinctures: ['vert'] } }
+  ] });
+  assert.doesNotMatch(distinct, /stroke="#2b2218"/, 'no lines when all quarters differ');
+  const same = h.renderCoatOfArms({ shield: 'heater', partition: 'perPale', parts: [
+    { field: { type: 'plain', tinctures: ['argent'] } }, { field: { type: 'plain', tinctures: ['argent'] } }
+  ] });
+  assert.match(same, /stroke="#2b2218"/, 'a line where two argent fields meet');
 });
 
 test('the same coat fits every shield type via per-shield bbox', () => {
@@ -50,7 +60,6 @@ test('the same coat fits every shield type via per-shield bbox', () => {
       { field: { type: 'plain', tinctures: ['or'] } }
     ] });
     assert.match(svg, /^<svg /, `${sh} renders`);
-    assert.match(svg, /stroke="#2b2218"/, `${sh} has a division line`);
   }
 });
 

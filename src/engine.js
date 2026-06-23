@@ -177,26 +177,25 @@ function placeCharge(name, tinctures, stroke, opts, target, sx, sy, ctx) {
     `<use href="#ch_${name}" xlink:href="#ch_${name}" transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${(sx * flip).toFixed(4)} ${sy.toFixed(4)})"/></g>`;
 }
 
-// Scale a charge so its measured artwork fills the available square area, with
-// bounded non-uniform stretch for narrow cells.
+// Scale a charge UNIFORMLY (no stretch — stretching mangles tall charges like
+// eagles/crosses) so its measured artwork fits the available area with padding.
 function chargeScale(name, area, sizeMod) {
   const bb = chargeBBox(name);
-  let sx = (area.w * CHARGE_PAD) / bb.w * sizeMod;
-  let sy = (area.h * CHARGE_PAD) / bb.h * sizeMod;
-  if (sy > sx * STRETCH_CAP) sy = sx * STRETCH_CAP;
-  if (sx > sy * STRETCH_CAP) sx = sy * STRETCH_CAP;
-  return { sx, sy };
+  const s = Math.min((area.w * CHARGE_PAD) / bb.w, (area.h * CHARGE_PAD) / bb.h) * sizeMod;
+  return { sx: s, sy: s };
 }
 
-// The area a charge occupies inside a cell: a square the width of the cell,
-// anchored toward the top of tall cells so charges sit in the wide part of the
-// shield (and clear of the narrowing base), centred otherwise.
+// The area a charge occupies inside a cell. For tall cells the area height is
+// capped (so the charge stays a sensible size) and anchored a little above
+// centre, keeping charges in the wide part of the field and clear of a
+// narrowing base; otherwise the charge uses the whole cell.
 function chargeArea(b) {
-  const side = Math.min(b.w, b.h);
-  const tall = b.h > b.w * 1.15;
   const cx = b.x + b.w / 2;
-  const cy = tall ? b.y + side * 0.5 + b.w * 0.06 : b.y + b.h / 2;
-  return { cx, cy, w: tall ? b.w : Math.min(b.w, b.h * 1.1), h: side };
+  if (b.h > b.w * 1.25) {
+    const h = b.w * 1.25;
+    return { cx, cy: b.y + h / 2 + b.w * 0.05, w: b.w, h };
+  }
+  return { cx, cy: b.y + b.h / 2, w: b.w, h: b.h };
 }
 
 function renderCharges(charge, b, ctx) {
@@ -249,12 +248,18 @@ function splitBox(b, partition) {
       ];
     }
     case 'ente': {
-      const cx = x + w / 2, topY = y + h * 0.82, half = w * 0.17;
-      const wedge = `M${cx - half} ${topY}C${cx - half} ${topY} ${cx - half * 0.7} ${y + h * 0.95} ${cx} ${y + h}` +
-        `C${cx + half * 0.7} ${y + h * 0.95} ${cx + half} ${topY} ${cx + half} ${topY}Z`;
+      // Enté en point: a curved-top wedge grafted into the base, meeting the
+      // shield's bottom point. The main field is drawn first; the point overlays.
+      const cx = x + w / 2;
+      const topY = y + h * 0.68;       // how high the graft rises
+      const half = w * 0.2;            // half-width at the top
+      const baseY = y + h;             // shield base (point)
+      const wedge = `M${cx - half} ${topY} Q ${cx} ${topY - h * 0.06} ${cx + half} ${topY} ` +
+        `Q ${cx + half * 0.55} ${baseY - h * 0.04} ${cx} ${baseY} ` +
+        `Q ${cx - half * 0.55} ${baseY - h * 0.04} ${cx - half} ${topY} Z`;
       return [
         { box: box(x, y, w, h), clip: rectPath(b) },
-        { box: box(cx - half, topY, half * 2, y + h - topY), clip: wedge }
+        { box: box(cx - half, topY - h * 0.06, half * 2, baseY - topY + h * 0.06), clip: wedge }
       ];
     }
     case 'grid': return null; // handled with rows/cols in renderNode
@@ -267,6 +272,44 @@ function gridBoxes(b, rows, cols) {
   for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
     const cell = box(b.x + c * b.w / cols, b.y + r * b.h / rows, b.w / cols, b.h / rows);
     out.push({ box: cell, clip: rectPath(cell) });
+  }
+  return out;
+}
+
+const RECT_PARTITIONS = new Set(['perPale', 'perFess', 'quarterly', 'grid']);
+
+// A node's single dominant fill colour, or null if it has none (a marshalled
+// child, or a patterned field that is self-distinguishing).
+function primaryColor(node) {
+  if (!node || node.parts) return null;
+  const f = node.field;
+  if (!f) return null;
+  if (f.type === 'plain' || f.type === 'semy') return hex((f.tinctures || [])[0]);
+  return null;
+}
+
+// Hairlines on shared edges between adjacent cells of equal colour.
+function divisionLines(regions, parts, lw) {
+  const E = 0.6;
+  const cells = regions.map((r, i) => r ? { b: r.box, c: primaryColor(parts[i]) } : null).filter(Boolean);
+  let out = '';
+  for (let i = 0; i < cells.length; i++) {
+    for (let j = i + 1; j < cells.length; j++) {
+      const A = cells[i], B = cells[j];
+      if (!A.c || A.c !== B.c) continue;
+      const ax2 = A.b.x + A.b.w, ay2 = A.b.y + A.b.h, bx2 = B.b.x + B.b.w, by2 = B.b.y + B.b.h;
+      let seg = null;
+      if (Math.abs(ax2 - B.b.x) < E || Math.abs(bx2 - A.b.x) < E) {       // vertical shared edge
+        const x = Math.abs(ax2 - B.b.x) < E ? ax2 : A.b.x;
+        const y0 = Math.max(A.b.y, B.b.y), y1 = Math.min(ay2, by2);
+        if (y1 - y0 > E) seg = `M${x} ${y0}V${y1}`;
+      } else if (Math.abs(ay2 - B.b.y) < E || Math.abs(by2 - A.b.y) < E) { // horizontal shared edge
+        const y = Math.abs(ay2 - B.b.y) < E ? ay2 : A.b.y;
+        const x0 = Math.max(A.b.x, B.b.x), x1 = Math.min(ax2, bx2);
+        if (x1 - x0 > E) seg = `M${x0} ${y}H${x1}`;
+      }
+      if (seg) out += `<path d="${seg}" stroke="${LINE}" stroke-width="${lw.toFixed(2)}" fill="none"/>`;
+    }
   }
   return out;
 }
@@ -290,10 +333,12 @@ function renderNode(node, b, ctx) {
       ctx.defs.push(`<clipPath id="${childClip}"><path d="${region.clip}"/></clipPath>`);
       inner += `<g clip-path="url(#${childClip})">${renderNode(child, region.box, ctx)}</g>`;
     });
-    // division lines between cells (drawn over the children for legibility)
-    regions.forEach(region => {
-      if (region) inner += `<path d="${region.clip}" fill="none" stroke="${LINE}" stroke-width="${lw.toFixed(2)}"/>`;
-    });
+    // A partition is normally shown by the change of tincture alone — no line.
+    // Draw a hairline only where two adjacent cells share the same colour (and
+    // would otherwise be indistinguishable). Rectangular partitions only.
+    if (RECT_PARTITIONS.has(node.partition)) {
+      inner += divisionLines(regions, node.parts, lw);
+    }
   } else {
     inner += renderField(node.field, b, ctx);
     (node.ordinaries || []).forEach(o => { inner += renderOrdinary(o, b); });
