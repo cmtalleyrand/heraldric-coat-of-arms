@@ -3,44 +3,53 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Heraldric Coat of Arms</title>
+  <title>Heraldic Coat of Arms Studio</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="page-shell">
-    <section class="intro">
-      <p class="eyebrow">Historically inspired heraldry studio</p>
-      <h1>Forge a medieval coat of arms</h1>
-      <p>Compose a shield from classic tinctures, ordinaries, charges, layouts, and a motto. The preview updates as a deterministic SVG, so every option maps directly to visible geometry.</p>
+  <header class="topbar">
+    <div class="brand">
+      <p class="eyebrow">Heraldry studio</p>
+      <h1>Coat of Arms Designer</h1>
+    </div>
+    <div class="topbar-controls">
+      <label class="field">Preset
+        <select id="preset"></select>
+      </label>
+      <label class="field">Shield
+        <select id="shield"></select>
+      </label>
+      <button id="export-svg" type="button" class="btn">Export SVG</button>
+      <button id="export-png" type="button" class="btn">Export PNG</button>
+      <button id="share" type="button" class="btn">Copy link</button>
+    </div>
+  </header>
+
+  <main class="studio">
+    <section class="preview-pane" aria-label="Live preview">
+      <div id="preview" class="preview"></div>
+      <p id="blazon" class="blazon"></p>
+      <p id="warning" class="warning" hidden>Heads up: a charge or ordinary shares its field's metal/colour class (rule of tincture).</p>
     </section>
-    <section class="workspace" aria-label="Coat of arms designer">
-      <form id="arms-form" class="panel">
-        <div class="panel-heading">
-          <p class="eyebrow">Design controls</p>
-          <h2>Choose the arms</h2>
-          <p>Each select changes one finite set of SVG nodes, keeping the rendering predictable and fast.</p>
-        </div>
-        <div class="control-grid">
-          <label>Field tincture<select id="field" name="field"></select></label>
-          <label>Ordinary<select id="ordinary" name="ordinary"></select></label>
-          <label>Ordinary tincture<select id="ordinaryTincture" name="ordinaryTincture"></select></label>
-          <label>Charge<select id="charge" name="charge"></select></label>
-          <label>Charge tincture<select id="chargeTincture" name="chargeTincture"></select></label>
-          <label>Charge layout<select id="layout" name="layout"></select></label>
-          <label class="wide">Motto<input name="motto" maxlength="40" value="Fortune Favours the Bold"></label>
-        </div>
-        <p id="warning" class="warning">Historical note: metal-on-metal or colour-on-colour combinations weaken contrast under the rule of tincture.</p>
-      </form>
-      <article class="preview-card">
-        <div class="preview-header">
-          <p class="eyebrow">Live SVG preview</p>
-          <h2>Blazon draft</h2>
-        </div>
-        <div id="preview" class="preview"></div>
-        <p id="blazon"></p>
-      </article>
+
+    <section class="editor" aria-label="Design controls">
+      <nav id="breadcrumb" class="breadcrumb" aria-label="Selected region"></nav>
+      <div id="node-editor" class="node-editor"></div>
     </section>
   </main>
+
+  <footer class="credits">
+    <p>Charge artwork vendored from <a href="https://github.com/Azgaar/Armoria">Armoria</a> (MIT engine).
+    Simple charges are CC0; complex charges originate from
+    <a href="http://wappenwiki.org">WappenWiki</a> under CC BY-NC(-SA) 3.0 — <strong>non-commercial use only</strong>.
+    See <a href="NOTICE.md">NOTICE</a>.</p>
+  </footer>
+
+  <script src="src/data/tinctures.js"></script>
+  <script src="src/data/shields.js"></script>
+  <script src="src/data/charges.js"></script>
+  <script src="src/engine.js"></script>
+  <script src="src/presets.js"></script>
   <script src="src/heraldry.js"></script>
   <script src="src/app.js"></script>
 </body>

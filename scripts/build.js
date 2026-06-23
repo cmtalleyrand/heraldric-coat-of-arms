@@ -26,7 +26,11 @@ copyDir(join(root, 'src'), join(dist, 'src'));
 // long-lived caching, so without a changing URL mobile browsers (especially
 // Chrome for Android via bfcache) keep executing the previously cached app.js.
 // A content hash guarantees every deploy ships a fresh URL.
-const assets = ['styles.css', 'src/heraldry.js', 'src/app.js'];
+const assets = [
+  'styles.css',
+  'src/data/tinctures.js', 'src/data/shields.js', 'src/data/charges.js',
+  'src/engine.js', 'src/presets.js', 'src/heraldry.js', 'src/app.js'
+];
 const hash = createHash('sha256');
 for (const asset of assets) hash.update(readFileSync(join(root, asset)));
 const version = hash.digest('hex').slice(0, 8);
