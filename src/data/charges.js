@@ -1,3 +1,4 @@
+(function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 // Curated charge library manifest. SVG sources live in src/charges/<name>.svg.
 // Vendored from Armoria (https://github.com/Azgaar/Armoria): simple charges CC0,
 // complex WappenWiki charges CC BY-NC(-SA) 3.0 — non-commercial use, see NOTICE.
@@ -612,3 +613,4 @@ const categories = {"beast":"Beasts","cross":"Crosses","nature":"Nature","buildi
 const api = { charges, categories };
 if (typeof module !== "undefined" && module.exports) module.exports = api;
 if (typeof window !== "undefined") window.heraldryChargeManifest = api;
+})();

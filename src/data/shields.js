@@ -1,3 +1,4 @@
+(function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 // Shield geometry ported from Armoria (MIT). Each shield: outline path in a
 // 0..200 space, a viewBox box, a measured drawable bbox (used to fit marshalling
 // to the silhouette), an optional charge size modifier, and a named position grid.
@@ -68,3 +69,4 @@ const shieldLabels = {"heater":"Heater","spanish":"Spanish","french":"French","o
 const api = { DEFAULT_BOX, shields, shieldLabels };
 if (typeof module !== "undefined" && module.exports) module.exports = api;
 if (typeof window !== "undefined") window.heraldryShields = api;
+})();

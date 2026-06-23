@@ -1,3 +1,4 @@
+(function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 // Ready-made coats. Charles V is the engine's acceptance test: partitions nested
 // four deep, every field variation, a compony bordure, an inescutcheon and an
 // enté-en-point — all expressed with the same generic node schema the editor uses.
@@ -93,3 +94,4 @@ const presets = {
 const api = { presets };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 if (typeof window !== 'undefined') window.heraldryPresets = api;
+})();

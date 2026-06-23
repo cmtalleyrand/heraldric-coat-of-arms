@@ -1,3 +1,4 @@
+(function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 // Tincture palette (colours, metals, stains) ported from Armoria (MIT).
 // `metal` marks the metals/light tinctures for the rule-of-tincture check.
 const tinctures = {
@@ -25,3 +26,4 @@ function isMetal(name) {
 const api = { tinctures, hex, isMetal };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 if (typeof window !== 'undefined') window.heraldryTinctures = api;
+})();

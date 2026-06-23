@@ -1,3 +1,4 @@
+(function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 // Public aggregator. Wires the ported data layer + engine together and handles
 // charge-source loading (filesystem under Node for tests, fetch in the browser).
 
@@ -117,3 +118,4 @@ const api = {
 
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 if (typeof window !== 'undefined') window.heraldry = Object.assign(window.heraldry || {}, api);
+})();

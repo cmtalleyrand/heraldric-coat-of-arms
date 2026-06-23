@@ -1,3 +1,4 @@
+(function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 /* global heraldry */
 const H = window.heraldry;
 const $ = sel => document.querySelector(sel);
@@ -311,3 +312,4 @@ if (loadHash()) $('#shield').value = tree.shield || 'spanish';
 buildBreadcrumb();
 buildEditor();
 render();
+})();

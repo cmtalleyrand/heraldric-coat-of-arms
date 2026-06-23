@@ -1,3 +1,4 @@
+(function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 // Heraldry rendering engine. A coat of arms is a recursive tree of nodes:
 //   leaf node:        { field, ordinaries?, charges?, inescutcheon? }
 //   marshalling node: { partition, parts: [node, ...] }
@@ -424,3 +425,4 @@ function renderArms(tree, options) {
 const api = { renderArms, collectCharges, prepareSymbol, box, GRID };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 if (typeof window !== 'undefined') window.heraldryEngine = api;
+})();
