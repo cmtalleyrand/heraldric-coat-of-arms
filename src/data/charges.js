@@ -590,6 +590,20 @@ const charges = {
       "w": 108,
       "h": 108
     }
+  },
+  "pike": {
+    "label": "Pike (barbel)",
+    "cat": "beast",
+    "viewBox": "50 50 200 200",
+    "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
+    "author": "",
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 81.2,
+      "y": 58,
+      "w": 37.6,
+      "h": 88
+    }
   }
 };
 

@@ -50,8 +50,31 @@ const charlesV = {
   ]
 };
 
+// --- Guise (House of Lorraine-Guise): coupé et parti en 3 + Lorraine inescutcheon
+const gHungary = { field: { type: 'barry', tinctures: ['gules', 'argent'], count: 8 }, charges: [] };
+const gSicily = { field: { type: 'semy', tinctures: ['azure'], semyCharge: 'fleurDeLis', semyTincture: 'or' }, charges: [], ordinaries: [{ ordinary: 'label', t: 'gules' }] };
+const gJerusalem = plain('argent', [{ charge: 'crossJerusalem', t: 'or', p: 'e' }]);
+const gAragon = { field: { type: 'paly', tinctures: ['or', 'gules'], count: 9 }, charges: [] };
+const gAnjou = { field: { type: 'semy', tinctures: ['azure'], semyCharge: 'fleurDeLis', semyTincture: 'or' }, charges: [], ordinaries: [{ ordinary: 'bordure', t: 'gules' }] };
+const gGueldres = plain('azure', [{ charge: 'lionRampant', t: 'or', sinister: true, p: 'e' }, { charge: 'crown', t: 'gules', p: 'b', size: 0.5 }]);
+const gJulich = plain('or', [{ charge: 'lionRampant', t: 'sable', p: 'e' }]);
+const gBar = { field: { type: 'semy', tinctures: ['azure'], semyCharge: 'crossPattee', semyTincture: 'or' }, charges: [{ charge: 'pike', t: 'or', p: 'df' }] };
+const lorraine = {
+  field: { type: 'plain', tinctures: ['or'] },
+  ordinaries: [{ ordinary: 'bend', t: 'gules' }],
+  charges: [{ charge: 'eagle', t: 'argent', along: 'bend', count: 3, size: 0.7 }]
+};
+const guise = {
+  shield: 'spanish',
+  partition: 'grid', rows: 2, cols: 4,
+  parts: [gHungary, gSicily, gJerusalem, gAragon, gAnjou, gGueldres, gJulich, gBar],
+  inescutcheon: lorraine,
+  ordinaries: [{ ordinary: 'label', t: 'gules' }]
+};
+
 const presets = {
   charlesV: { label: 'Charles V, Holy Roman Emperor', tree: charlesV },
+  guise: { label: 'House of Guise (Lorraine)', tree: guise },
   castileLeon: { label: 'Castile and León', tree: { shield: 'spanish', ...castileLeon } },
   castile: { label: 'Kingdom of Castile', tree: { shield: 'heater', ...castile } },
   perPaleDemo: {

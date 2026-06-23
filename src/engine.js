@@ -155,6 +155,16 @@ function renderOrdinary(o, b) {
       }
       return out;
     }
+    case 'label': {
+      const n = o.points || 3;
+      const barY = b.y + b.h * 0.1, barH = b.h * 0.06;
+      let out = `<rect x="${b.x}" y="${barY}" width="${b.w}" height="${barH}" fill="${t}"/>`;
+      const pw = b.w * 0.08, gap = b.w / (n + 1);
+      for (let k = 1; k <= n; k++) {
+        out += `<rect x="${b.x + gap * k - pw / 2}" y="${barY}" width="${pw}" height="${barH * 2.6}" fill="${t}"/>`;
+      }
+      return out;
+    }
     default: return '';
   }
 }
@@ -199,13 +209,26 @@ function chargeArea(b) {
 }
 
 function renderCharges(charge, b, ctx) {
+  const tinctures = [charge.t, charge.t2, charge.t3].filter(Boolean);
+  // Charges set along a bend (e.g. the Lorraine alérions) — spaced along the
+  // dexter-chief→sinister-base diagonal, drawn upright.
+  if (charge.along === 'bend') {
+    const n = charge.count || 3;
+    const { sx, sy } = chargeScale(charge.charge, { w: b.w * 0.3, h: b.h * 0.3 }, charge.size || 1);
+    let out = '';
+    for (let k = 1; k <= n; k++) {
+      const f = k / (n + 1);
+      out += placeCharge(charge.charge, tinctures, charge.stroke, charge,
+        { x: b.x + b.w * f, y: b.y + b.h * f }, sx, sy, ctx);
+    }
+    return out;
+  }
   const positions = (charge.p || 'e').split('').filter(p => GRID[p]);
   if (!positions.length) positions.push('e');
   const area = chargeArea(b);
   const divisor = positions.length > 1 ? Math.ceil(Math.sqrt(positions.length)) : 1;
   const sub = { w: area.w / divisor, h: area.h / divisor };
   const { sx, sy } = chargeScale(charge.charge, sub, charge.size || 1);
-  const tinctures = [charge.t, charge.t2, charge.t3].filter(Boolean);
   return positions.map(p => {
     const [ox, oy] = GRID[p];
     const target = { x: area.cx + ox * (area.w / 200), y: area.cy + oy * (area.h / 200) };
@@ -339,6 +362,9 @@ function renderNode(node, b, ctx) {
     if (RECT_PARTITIONS.has(node.partition)) {
       inner += divisionLines(regions, node.parts, lw);
     }
+    // "overall" ordinaries/charges sit on top of a partition (e.g. a brisure label)
+    (node.ordinaries || []).forEach(o => { inner += renderOrdinary(o, b); });
+    (node.charges || []).forEach(c => { inner += renderCharges(c, b, ctx); });
   } else {
     inner += renderField(node.field, b, ctx);
     (node.ordinaries || []).forEach(o => { inner += renderOrdinary(o, b); });

@@ -26,6 +26,15 @@ test('Charles V exercises the full engine (depth, charges, inescutcheon)', () =>
   assert.match(svg, /scale\([0-9.]+ [0-9.]+\)/, 'charge fill scale present');
 });
 
+test('Guise preset renders new primitives (label, charged bend, barbel)', () => {
+  const svg = h.renderCoatOfArms(presets.guise.tree);
+  assert.match(svg, /^<svg /);
+  assert.match(svg, /xlink:href="#ch_pike"/, 'barbels present');
+  assert.match(svg, /xlink:href="#ch_eagle"/, 'alérions on the bend');
+  // three alérions along the bend
+  assert.equal((svg.match(/xlink:href="#ch_eagle"/g) || []).length, 3);
+});
+
 test('marshalling splits a quarterly node into four clipped regions', () => {
   const tree = { shield: 'heater', partition: 'quarterly', parts: [
     { field: { type: 'plain', tinctures: ['gules'] } },
