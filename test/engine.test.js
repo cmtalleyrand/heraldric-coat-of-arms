@@ -13,7 +13,7 @@ test('every preset renders to a valid svg without throwing', () => {
 
 test('Charles V exercises the full engine (depth, charges, inescutcheon)', () => {
   const svg = h.renderCoatOfArms(presets.charlesV.tree);
-  // Spanish shield viewBox
+  // baroque (royal) shield viewBox
   assert.match(svg, /viewBox="0 10 200 200"/);
   // Castile appears 8 times (2 castles per Castile/León quarter x 4 occurrences)
   const castles = (svg.match(/xlink:href="#ch_castle"/g) || []).length;
@@ -39,7 +39,7 @@ test('marshalling splits a quarterly node into four clipped regions', () => {
     assert.ok(svg.includes(h.tinctures[t].hex), `${t} fill present`);
   }
   // division lines drawn between cells
-  assert.match(svg, /stroke="#15110c"/, 'division lines present');
+  assert.match(svg, /stroke="#2b2218"/, 'division lines present');
 });
 
 test('the same coat fits every shield type via per-shield bbox', () => {
@@ -50,7 +50,7 @@ test('the same coat fits every shield type via per-shield bbox', () => {
       { field: { type: 'plain', tinctures: ['or'] } }
     ] });
     assert.match(svg, /^<svg /, `${sh} renders`);
-    assert.match(svg, /stroke="#15110c"/, `${sh} has a division line`);
+    assert.match(svg, /stroke="#2b2218"/, `${sh} has a division line`);
   }
 });
 

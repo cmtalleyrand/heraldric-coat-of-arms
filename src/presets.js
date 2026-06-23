@@ -42,7 +42,7 @@ const burgundyGrand = M('quarterly', [austria, burgundyModern, burgundyAncient, 
   { inescutcheon: M('perPale', [flanders, tyrol]) });
 
 const charlesV = {
-  shield: 'spanish',
+  shield: 'baroque',
   partition: 'ente',
   parts: [
     M('quarterly', [spainGrand, burgundyGrand, burgundyGrand, spainGrand]),

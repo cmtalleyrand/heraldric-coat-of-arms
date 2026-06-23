@@ -7,6 +7,7 @@
 
 const SH = (typeof require !== 'undefined') ? require('./data/shields') : window.heraldryShields;
 const TINCT = (typeof require !== 'undefined') ? require('./data/tinctures') : window.heraldryTinctures;
+const MANIFEST = (typeof require !== 'undefined') ? require('./data/charges') : window.heraldryChargeManifest;
 const hex = TINCT.hex;
 
 // 3x3 named position grid (offsets from a region's centre, in ±50 of half-box).
@@ -16,13 +17,16 @@ const GRID = {
   g: [-50, 50], h: [0, 50], i: [50, 50]
 };
 
-// Charge artwork is centred near (100,100) and spans roughly ART_EXTENT units.
-const ART_EXTENT = 132;
-const ART_CENTER = 100;
-const CHARGE_PAD = 0.92;     // fraction of the cell a charge fills
-const STRETCH_CAP = 1.7;     // max non-uniform stretch in narrow cells
-const OUTLINE = '#1a1713';
-const LINE = '#15110c';      // division lines between cells
+const CHARGE_PAD = 0.94;     // fraction of a cell's charge-area a charge fills
+const STRETCH_CAP = 1.45;    // max non-uniform stretch
+const OUTLINE = '#5a4626';   // thin shield outline (soft brown, like the references)
+const OUTLINE_W = 1.1;
+const LINE = '#2b2218';      // hairline between cells
+// fallback charge bbox if a charge isn't measured
+const DEF_BBOX = { x: 60, y: 60, w: 80, h: 88 };
+function chargeBBox(name) {
+  return (MANIFEST.charges[name] && MANIFEST.charges[name].bbox) || DEF_BBOX;
+}
 
 function box(x, y, w, h) { return { x, y, w, h }; }
 function rectPath(b) { return `M${b.x} ${b.y}H${b.x + b.w}V${b.y + b.h}H${b.x}Z`; }
@@ -112,9 +116,9 @@ function renderField(field, b, ctx) {
       for (let y = b.y + sz * 0.3; y < b.y + b.h - sz * 0.3; y += stepY) {
         const off = (row % 2) * (stepX / 2);
         for (let x = b.x - stepX + off; x < b.x + b.w; x += stepX) {
-          const s = (sz * 1.3) / ART_EXTENT;
+          const { sx, sy } = chargeScale(field.semyCharge, { w: sz, h: sz }, 1);
           out += placeCharge(field.semyCharge, [field.semyTincture || 'or'], null, {},
-            { x: x + sz / 2, y: y + sz / 2 }, s, s, ctx);
+            { x: x + sz / 2, y: y + sz / 2 }, sx, sy, ctx);
         }
         row++;
       }
@@ -162,33 +166,50 @@ function placeCharge(name, tinctures, stroke, opts, target, sx, sy, ctx) {
   const t = hex(tinctures[0]);
   const t2 = tinctures[1] ? hex(tinctures[1]) : t;
   const t3 = tinctures[2] ? hex(tinctures[2]) : t;
-  const strk = stroke || OUTLINE;
-  const tx = target.x - ART_CENTER * sx, ty = target.y - ART_CENTER * sy;
-  return `<g fill="${t}" stroke="${strk}" stroke-width="${(0.7 / ((sx + sy) / 2)).toFixed(2)}" ` +
+  const strk = stroke || '#000';
+  const bb = chargeBBox(name);
+  const acx = bb.x + bb.w / 2, acy = bb.y + bb.h / 2;   // artwork centre
+  const flip = opts && opts.sinister ? -1 : 1;
+  const tx = target.x - acx * sx * flip, ty = target.y - acy * sy;
+  const sw = (0.8 / ((Math.abs(sx) + sy) / 2)).toFixed(2);
+  return `<g fill="${t}" stroke="${strk}" stroke-width="${sw}" ` +
     `style="--secondary:${t2};--tertiary:${t3};--stroke:${strk}">` +
-    `<use href="#ch_${name}" xlink:href="#ch_${name}" transform="translate(${tx} ${ty}) scale(${sx} ${sy})"/></g>`;
+    `<use href="#ch_${name}" xlink:href="#ch_${name}" transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${(sx * flip).toFixed(4)} ${sy.toFixed(4)})"/></g>`;
 }
 
-// Charges fill their cell: scale to the cell with padding, allowing bounded
-// non-uniform stretch (real heraldry stretches charges in narrow divisions).
-function chargeScale(b, sizeMod, divisor) {
-  let sx = (b.w * CHARGE_PAD) / ART_EXTENT * sizeMod / divisor;
-  let sy = (b.h * CHARGE_PAD) / ART_EXTENT * sizeMod / divisor;
+// Scale a charge so its measured artwork fills the available square area, with
+// bounded non-uniform stretch for narrow cells.
+function chargeScale(name, area, sizeMod) {
+  const bb = chargeBBox(name);
+  let sx = (area.w * CHARGE_PAD) / bb.w * sizeMod;
+  let sy = (area.h * CHARGE_PAD) / bb.h * sizeMod;
   if (sy > sx * STRETCH_CAP) sy = sx * STRETCH_CAP;
   if (sx > sy * STRETCH_CAP) sx = sy * STRETCH_CAP;
   return { sx, sy };
 }
 
+// The area a charge occupies inside a cell: a square the width of the cell,
+// anchored toward the top of tall cells so charges sit in the wide part of the
+// shield (and clear of the narrowing base), centred otherwise.
+function chargeArea(b) {
+  const side = Math.min(b.w, b.h);
+  const tall = b.h > b.w * 1.15;
+  const cx = b.x + b.w / 2;
+  const cy = tall ? b.y + side * 0.5 + b.w * 0.06 : b.y + b.h / 2;
+  return { cx, cy, w: tall ? b.w : Math.min(b.w, b.h * 1.1), h: side };
+}
+
 function renderCharges(charge, b, ctx) {
   const positions = (charge.p || 'e').split('').filter(p => GRID[p]);
   if (!positions.length) positions.push('e');
-  const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+  const area = chargeArea(b);
   const divisor = positions.length > 1 ? Math.ceil(Math.sqrt(positions.length)) : 1;
-  const { sx, sy } = chargeScale(b, charge.size || 1, divisor);
+  const sub = { w: area.w / divisor, h: area.h / divisor };
+  const { sx, sy } = chargeScale(charge.charge, sub, charge.size || 1);
   const tinctures = [charge.t, charge.t2, charge.t3].filter(Boolean);
   return positions.map(p => {
     const [ox, oy] = GRID[p];
-    const target = { x: cx + ox * (b.w / 200), y: cy + oy * (b.h / 200) };
+    const target = { x: area.cx + ox * (area.w / 200), y: area.cy + oy * (area.h / 200) };
     return placeCharge(charge.charge, tinctures, charge.stroke, charge, target, sx, sy, ctx);
   }).join('');
 }
@@ -200,10 +221,17 @@ function splitBox(b, partition) {
   switch (partition) {
     case 'perPale': return [box(x, y, w / 2, h), box(x + w / 2, y, w / 2, h)].map(r => ({ box: r, clip: rectPath(r) }));
     case 'perFess': return [box(x, y, w, h / 2), box(x, y + h / 2, w, h / 2)].map(r => ({ box: r, clip: rectPath(r) }));
-    case 'quarterly': return [
-      box(x, y, w / 2, h / 2), box(x + w / 2, y, w / 2, h / 2),
-      box(x, y + h / 2, w / 2, h / 2), box(x + w / 2, y + h / 2, w / 2, h / 2)
-    ].map(r => ({ box: r, clip: rectPath(r) }));
+    case 'quarterly': {
+      // Square-module quartering: when the region is taller than wide, the top
+      // quarters are squares (w/2 each) and the bottom quarters absorb the extra
+      // height (flowing into the shield's base). Square/wide regions split evenly.
+      const topH = h > w ? w / 2 : h / 2;
+      const botH = h - topH;
+      return [
+        box(x, y, w / 2, topH), box(x + w / 2, y, w / 2, topH),
+        box(x, y + topH, w / 2, botH), box(x + w / 2, y + topH, w / 2, botH)
+      ].map(r => ({ box: r, clip: rectPath(r) }));
+    }
     case 'perSaltire': {
       const TL = [x, y], TR = [x + w, y], BR = [x + w, y + h], BL = [x, y + h], C = [x + w / 2, y + h / 2];
       return [[TL, TR, C], [TL, C, BL], [TR, BR, C], [BL, C, BR]].map(tr => ({ box: bboxOf(tr), clip: poly(tr) }));
@@ -254,7 +282,7 @@ function renderNode(node, b, ctx) {
     const regions = node.partition === 'grid'
       ? gridBoxes(b, node.rows || 2, node.cols || 2)
       : splitBox(b, node.partition);
-    const lw = Math.max(0.7, Math.min(b.w, b.h) * 0.022);
+    const lw = Math.max(0.35, Math.min(b.w, b.h) * 0.006);
     node.parts.forEach((child, i) => {
       const region = regions[i];
       if (!region) return;
@@ -281,7 +309,7 @@ function renderNode(node, b, ctx) {
     const ic = `clip${clipCounter++}`;
     ctx.defs.push(`<clipPath id="${ic}"><path d="${ctx.shieldPath}" transform="${tf}"/></clipPath>`);
     inner += `<g clip-path="url(#${ic})"><g transform="${tf}">${renderNode(node.inescutcheon, box(bb.x, bb.y, bb.w, bb.h), ctx)}</g></g>`;
-    inner += `<path d="${ctx.shieldPath}" transform="${tf}" fill="none" stroke="${OUTLINE}" stroke-width="${(2 / sxx).toFixed(2)}"/>`;
+    inner += `<path d="${ctx.shieldPath}" transform="${tf}" fill="none" stroke="${OUTLINE}" stroke-width="${(OUTLINE_W / sxx).toFixed(2)}"/>`;
   }
   return `<g clip-path="url(#${clipId})">${inner}</g>`;
 }
@@ -317,7 +345,7 @@ function renderArms(tree, options) {
     svg: `<svg viewBox="${box4}" role="img" aria-label="Coat of arms" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">` +
       defs +
       `<g clip-path="url(#${shieldId})">${body}</g>` +
-      `<path d="${shieldDef.path}" fill="none" stroke="${OUTLINE}" stroke-width="3"/>` +
+      `<path d="${shieldDef.path}" fill="none" stroke="${OUTLINE}" stroke-width="${OUTLINE_W}"/>` +
       `</svg>`
   };
 }

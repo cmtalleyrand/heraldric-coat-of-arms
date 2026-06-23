@@ -1,6 +1,7 @@
 // Curated charge library manifest. SVG sources live in src/charges/<name>.svg.
 // Vendored from Armoria (https://github.com/Azgaar/Armoria): simple charges CC0,
 // complex WappenWiki charges CC BY-NC(-SA) 3.0 — non-commercial use, see NOTICE.
+// bbox = measured drawn extent of the artwork (in the 50..250 charge space).
 const charges = {
   "lionRampant": {
     "label": "Lion Rampant",
@@ -8,7 +9,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 63.6,
+      "y": 58.8,
+      "w": 72.8,
+      "h": 91.2
+    }
   },
   "lionPassant": {
     "label": "Lion Passant",
@@ -16,7 +23,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 56.4,
+      "y": 77.2,
+      "w": 85.6,
+      "h": 42.4
+    }
   },
   "lionPassantGuardant": {
     "label": "Lion Passant Guardant",
@@ -24,7 +37,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/5/59/Aquitaine.svg"
+    "source": "http://wappenwiki.org/images/5/59/Aquitaine.svg",
+    "bbox": {
+      "x": 54.8,
+      "y": 68.4,
+      "w": 90.4,
+      "h": 63.2
+    }
   },
   "lionSejant": {
     "label": "Lion Sejant",
@@ -32,7 +51,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/f/f9/Langres_Livro.svg"
+    "source": "http://wappenwiki.org/images/f/f9/Langres_Livro.svg",
+    "bbox": {
+      "x": 59.6,
+      "y": 74,
+      "w": 80.8,
+      "h": 52
+    }
   },
   "lionHeadCaboshed": {
     "label": "Lion Head Caboshed",
@@ -40,7 +65,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/0/0d/Leijonansikte.svg"
+    "source": "http://wappenwiki.org/images/0/0d/Leijonansikte.svg",
+    "bbox": {
+      "x": 66,
+      "y": 59.6,
+      "w": 68,
+      "h": 80.8
+    }
   },
   "eagle": {
     "label": "Eagle",
@@ -48,7 +79,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 62,
+      "y": 59.6,
+      "w": 76,
+      "h": 89.6
+    }
   },
   "eagleTwoHeads": {
     "label": "Eagle Two Heads",
@@ -56,7 +93,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 61.2,
+      "y": 59.6,
+      "w": 77.6,
+      "h": 90.4
+    }
   },
   "bearRampant": {
     "label": "Bear Rampant",
@@ -64,7 +107,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/2/2d/Smolensk_Bergshammar.svg"
+    "source": "http://wappenwiki.org/images/2/2d/Smolensk_Bergshammar.svg",
+    "bbox": {
+      "x": 73.2,
+      "y": 59.6,
+      "w": 46.4,
+      "h": 81.6
+    }
   },
   "boarRampant": {
     "label": "Boar Rampant",
@@ -72,7 +121,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 59.6,
+      "y": 61.2,
+      "w": 80.8,
+      "h": 79.2
+    }
   },
   "wolfRampant": {
     "label": "Wolf Rampant",
@@ -80,7 +135,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/0/05/Passau.svg"
+    "source": "http://wappenwiki.org/images/0/05/Passau.svg",
+    "bbox": {
+      "x": 66.8,
+      "y": 58,
+      "w": 60.8,
+      "h": 86.4
+    }
   },
   "crossPotent": {
     "label": "Cross Potent",
@@ -88,7 +149,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "crossJerusalem": {
     "label": "Cross Jerusalem",
@@ -96,7 +163,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "crossPattee": {
     "label": "Cross Pattee",
@@ -104,7 +177,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 61.2,
+      "y": 61.2,
+      "w": 77.6,
+      "h": 77.6
+    }
   },
   "crossFleury": {
     "label": "Cross Fleury",
@@ -112,7 +191,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "crossMoline": {
     "label": "Cross Moline",
@@ -120,7 +205,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "crossFormee": {
     "label": "Cross Formee",
@@ -128,7 +219,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "crossBottony": {
     "label": "Cross Bottony",
@@ -136,7 +233,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "crossMaltese": {
     "label": "Cross Maltese",
@@ -144,7 +247,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 58.8,
+      "y": 58.8,
+      "w": 82.4,
+      "h": 82.4
+    }
   },
   "crossSaltire": {
     "label": "Cross Saltire",
@@ -152,7 +261,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 65.2,
+      "y": 65.2,
+      "w": 69.6,
+      "h": 69.6
+    }
   },
   "crossCalvary": {
     "label": "Cross Calvary",
@@ -160,7 +275,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 64.4,
+      "y": 54,
+      "w": 71.2,
+      "h": 96.8
+    }
   },
   "fleurDeLis": {
     "label": "Fleur De lis",
@@ -168,7 +289,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 68.4,
+      "y": 58.8,
+      "w": 63.2,
+      "h": 82.4
+    }
   },
   "rose": {
     "label": "Rose",
@@ -176,7 +303,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 60.4,
+      "y": 59.6,
+      "w": 78.4,
+      "h": 80
+    }
   },
   "garb": {
     "label": "Garb",
@@ -184,7 +317,13 @@ const charges = {
     "viewBox": "50 50 400 400",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 57.2,
+      "y": 55.6,
+      "w": 35.2,
+      "h": 38.4
+    }
   },
   "castle": {
     "label": "Castle",
@@ -192,7 +331,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/8/82/Alfonso_VIII_of_Castile.svg"
+    "source": "http://wappenwiki.org/images/8/82/Alfonso_VIII_of_Castile.svg",
+    "bbox": {
+      "x": 66.8,
+      "y": 59.6,
+      "w": 66.4,
+      "h": 80.8
+    }
   },
   "tower": {
     "label": "Tower",
@@ -200,7 +345,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/3/3c/Logudoro.svg"
+    "source": "http://wappenwiki.org/images/3/3c/Logudoro.svg",
+    "bbox": {
+      "x": 81.2,
+      "y": 58.8,
+      "w": 36.8,
+      "h": 81.6
+    }
   },
   "anchor": {
     "label": "Anchor",
@@ -208,7 +359,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "",
-    "source": "https://commons.wikimedia.org/wiki/File:Wappen_R%C3%BCdigheim_(Neuberg).svg"
+    "source": "https://commons.wikimedia.org/wiki/File:Wappen_R%C3%BCdigheim_(Neuberg).svg",
+    "bbox": {
+      "x": 63.6,
+      "y": 57.2,
+      "w": 72.8,
+      "h": 88.8
+    }
   },
   "key": {
     "label": "Key",
@@ -216,7 +373,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 84.4,
+      "y": 59.6,
+      "w": 30.4,
+      "h": 80.8
+    }
   },
   "sword": {
     "label": "Sword",
@@ -224,7 +387,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 86.8,
+      "y": 59.6,
+      "w": 26.4,
+      "h": 80.8
+    }
   },
   "crown": {
     "label": "Crown",
@@ -232,7 +401,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 59.6,
+      "y": 66,
+      "w": 80.8,
+      "h": 68
+    }
   },
   "mullet": {
     "label": "Mullet",
@@ -240,7 +415,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 60.4,
+      "y": 58,
+      "w": 79.2,
+      "h": 76
+    }
   },
   "mullet6": {
     "label": "Mullet6",
@@ -248,7 +429,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 63.6,
+      "y": 58,
+      "w": 72.8,
+      "h": 84
+    }
   },
   "estoile": {
     "label": "Estoile",
@@ -256,7 +443,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 64.4,
+      "y": 59.6,
+      "w": 71.2,
+      "h": 80.8
+    }
   },
   "sun": {
     "label": "Sun",
@@ -264,7 +457,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "sunInSplendour": {
     "label": "Sun In Splendour",
@@ -272,7 +471,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 59.6,
+      "y": 59.6,
+      "w": 80.8,
+      "h": 80.8
+    }
   },
   "crescent": {
     "label": "Crescent",
@@ -280,7 +485,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 63.6,
+      "y": 64.4,
+      "w": 72.8,
+      "h": 69.6
+    }
   },
   "moonInCrescent": {
     "label": "Moon In Crescent",
@@ -288,7 +499,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org/images/4/46/Slatte.svg"
+    "source": "http://wappenwiki.org/images/4/46/Slatte.svg",
+    "bbox": {
+      "x": 71.6,
+      "y": 59.6,
+      "w": 57.6,
+      "h": 80.8
+    }
   },
   "annulet": {
     "label": "Annulet",
@@ -296,7 +513,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 69.2,
+      "y": 69.2,
+      "w": 61.6,
+      "h": 61.6
+    }
   },
   "billet": {
     "label": "Billet",
@@ -304,7 +527,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 78.8,
+      "y": 64.4,
+      "w": 42.4,
+      "h": 71.2
+    }
   },
   "escallop": {
     "label": "Escallop",
@@ -312,7 +541,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/licenses/by-nc-sa/3.0",
     "author": "",
-    "source": "http://wappenwiki.org"
+    "source": "http://wappenwiki.org",
+    "bbox": {
+      "x": 61.2,
+      "y": 60.4,
+      "w": 77.6,
+      "h": 79.2
+    }
   },
   "heart": {
     "label": "Heart",
@@ -320,7 +555,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "Azgaar",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 70,
+      "y": 74.8,
+      "w": 60,
+      "h": 58.4
+    }
   },
   "pomegranate": {
     "label": "Pomegranate",
@@ -328,7 +569,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "heraldric-coat-of-arms",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 52.4,
+      "y": 59.6,
+      "w": 95.2,
+      "h": 117.6
+    }
   },
   "escarbuncle": {
     "label": "Escarbuncle (Navarre)",
@@ -336,7 +583,13 @@ const charges = {
     "viewBox": "50 50 200 200",
     "license": "https://creativecommons.org/publicdomain/zero/1.0",
     "author": "heraldric-coat-of-arms",
-    "source": ""
+    "source": "",
+    "bbox": {
+      "x": 50,
+      "y": 50,
+      "w": 108,
+      "h": 108
+    }
   }
 };
 
