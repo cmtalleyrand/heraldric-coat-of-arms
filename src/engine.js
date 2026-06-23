@@ -196,15 +196,17 @@ function chargeScale(name, area, sizeMod) {
   return { sx: s, sy: s };
 }
 
-// The area a charge occupies inside a cell. For tall cells the area height is
-// capped (so the charge stays a sensible size) and anchored a little above
-// centre, keeping charges in the wide part of the field and clear of a
-// narrowing base; otherwise the charge uses the whole cell.
-function chargeArea(b) {
+// The area a charge occupies inside a cell. Cells sitting in the shield's
+// narrowing base get their charge pulled up into the wide part; everywhere else
+// the charge uses the whole cell (so tall mid-shield cells fill, not float).
+function chargeArea(b, ctx) {
   const cx = b.x + b.w / 2;
-  if (b.h > b.w * 1.25) {
-    const h = b.w * 1.25;
-    return { cx, cy: b.y + h / 2 + b.w * 0.05, w: b.w, h };
+  const bb = ctx.shieldBBox;
+  const baseTop = bb.y + bb.h * 0.72;
+  const inBase = (b.y + b.h) > baseTop && b.h > b.w * 1.1;
+  if (inBase) {
+    const hh = Math.min(b.h, b.w * 1.2);
+    return { cx, cy: b.y + hh / 2 + b.w * 0.04, w: b.w, h: hh };
   }
   return { cx, cy: b.y + b.h / 2, w: b.w, h: b.h };
 }
@@ -226,7 +228,7 @@ function renderCharges(charge, b, ctx) {
   }
   const positions = (charge.p || 'e').split('').filter(p => GRID[p]);
   if (!positions.length) positions.push('e');
-  const area = chargeArea(b);
+  const area = chargeArea(b, ctx);
   const divisor = positions.length > 1 ? Math.ceil(Math.sqrt(positions.length)) : 1;
   const sub = { w: area.w / divisor, h: area.h / divisor };
   const { sx, sy } = chargeScale(charge.charge, sub, charge.size || 1);
@@ -272,11 +274,11 @@ function splitBox(b, partition) {
       ];
     }
     case 'ente': {
-      // Enté en point: a curved-top wedge grafted into the base, meeting the
-      // shield's bottom point. The main field is drawn first; the point overlays.
+      // Enté en point: the small pointed negative space at the very base between
+      // the two lower quarters. The main field is drawn first; the point overlays.
       const cx = x + w / 2;
-      const topY = y + h * 0.68;       // how high the graft rises
-      const half = w * 0.2;            // half-width at the top
+      const topY = y + h * 0.80;       // how high the graft rises (small)
+      const half = w * 0.12;           // half-width at the top (narrow)
       const baseY = y + h;             // shield base (point)
       const wedge = `M${cx - half} ${topY} Q ${cx} ${topY - h * 0.06} ${cx + half} ${topY} ` +
         `Q ${cx + half * 0.55} ${baseY - h * 0.04} ${cx} ${baseY} ` +
