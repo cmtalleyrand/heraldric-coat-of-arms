@@ -13,8 +13,8 @@ test('every preset renders to a valid svg without throwing', () => {
 
 test('Charles V exercises the full engine (depth, charges, inescutcheon)', () => {
   const svg = h.renderCoatOfArms(presets.charlesV.tree);
-  // baroque (royal) shield viewBox
-  assert.match(svg, /viewBox="0 10 200 200"/);
+  // royal escutcheon viewBox
+  assert.match(svg, /viewBox="0 0 200 232"/);
   // Castile appears 8 times (2 castles per Castile/León quarter x 4 occurrences)
   const castles = (svg.match(/xlink:href="#ch_castle"/g) || []).length;
   assert.equal(castles, 8, 'expected 8 castle charges');

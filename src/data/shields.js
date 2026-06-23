@@ -5,6 +5,9 @@
 const DEFAULT_BOX = "0 10 200 200";
 
 const shields = {
+  royal: { box: "0 0 200 232", bbox: {"x":12,"y":13,"w":176,"h":212},
+    path: "M12 18 Q 56 8 100 22 Q 144 8 188 18 L188 135 C 188 166 158 168 146 183 C 128 206 110 217 100 225 C 90 217 72 206 54 183 C 42 168 12 166 12 135 Z",
+    positions: {"a":[-44,-50],"b":[0,-50],"c":[44,-50],"d":[-44,0],"e":[0,0],"f":[44,0],"g":[-44,50],"h":[0,50],"i":[44,50]} },
   baroque: { box: "0 10 200 200", bbox: {"x":25,"y":25,"w":151,"h":175},
     path: "m 25,39 C 50,27 82,25 100,25 c 18,0 50,2 75,14 v 37 l -2.7,3.2 c -4.9,5.4 -6.6,9.6 -6.7,16.2 0,6.5 2,11.6 6.9,17.2 l 2.8,3.1 v 10.2 c 0,17.7 -2.2,27.7 -7.8,35.9 -5,7.3 -11.7,11.3 -32.3,19.4 -12.6,5 -20.2,8.8 -28.6,14.5 C 103.3,198 100,200 100,200 c 0,0 -2.8,-2.3 -6.4,-4.7 C 85.6,189.8 78,186 65,180.9 32.4,168.1 26.9,160.9 25.8,129.3 L 25,116 l 3.3,-3.3 c 4.8,-5.2 7,-10.7 7,-17.3 0,-6.8 -1.8,-11.1 -6.5,-16.1 L 25,76 V 39 Z",
     positions: {"a":[-43.75,-45],"b":[0,-45],"c":[43.75,-45],"d":[-43.75,0],"e":[0,0],"f":[43.75,0],"g":[-43.75,50],"h":[0,50],"i":[43.75,50],"y":[-50,-50],"z":[0,60],"j":[-37.5,-37.5],"k":[0,-37.5],"l":[37.5,-37.5],"m":[-37.5,37.5],"n":[0,37.5],"o":[37.5,37.5],"p":[-37.5,0],"q":[37.5,0],"A":[-65,-54.5],"B":[-22,-65],"C":[22,-65],"D":[65,-54.5],"K":[-58.5,-15],"E":[58.5,-15],"J":[-65,31],"F":[66,31],"I":[-35,73],"G":[35,73],"H":[0,89]} },
@@ -64,7 +67,7 @@ const shields = {
     positions: {"a":[-37.5,-50],"b":[0,-50],"c":[37.5,-50],"d":[-43,0],"e":[0,0],"f":[43,0],"g":[-37.5,50],"h":[0,50],"i":[37.5,50],"y":[-48,-48],"z":[0,60],"j":[-35.5,-37.5],"k":[0,-37.5],"l":[35.5,-37.5],"m":[-35.5,37.5],"n":[0,50],"o":[35.5,37.5],"p":[-36.5,0],"q":[36.5,0],"A":[-48,-48],"B":[-23,-78],"C":[23,-78],"D":[48,-48],"K":[-59,-10],"E":[59,-10],"J":[-55,31],"F":[55,31],"I":[-36,68],"G":[36,68],"H":[0,85]} },
 };
 
-const shieldLabels = {"heater":"Heater","spanish":"Spanish","french":"French","oldFrench":"Old French","renaissance":"Renaissance","baroque":"Baroque (royal)","swiss":"Swiss","polish":"Polish","hessen":"Hessen","wedged":"Wedged","roman":"Roman","kite":"Kite","boeotian":"Boeotian","targe":"Targe","pavise":"Pavise","horsehead":"Horse-head","embowed":"Embowed","round":"Roundel","oval":"Oval"};
+const shieldLabels = {"royal":"Royal (Spanish)","heater":"Heater","spanish":"Spanish","french":"French","oldFrench":"Old French","renaissance":"Renaissance","baroque":"Baroque (royal)","swiss":"Swiss","polish":"Polish","hessen":"Hessen","wedged":"Wedged","roman":"Roman","kite":"Kite","boeotian":"Boeotian","targe":"Targe","pavise":"Pavise","horsehead":"Horse-head","embowed":"Embowed","round":"Roundel","oval":"Oval"};
 
 const api = { DEFAULT_BOX, shields, shieldLabels };
 if (typeof module !== "undefined" && module.exports) module.exports = api;
