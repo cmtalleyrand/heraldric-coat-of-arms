@@ -378,7 +378,7 @@ function renderNode(node, b, ctx) {
 
   if (node.inescutcheon) {
     const bb = ctx.shieldBBox;
-    const iw = b.w * 0.44, ih = iw * (bb.h / bb.w);
+    const iw = b.w * 0.34, ih = iw * (bb.h / bb.w);
     const ix = b.x + b.w / 2 - iw / 2, iy = b.y + b.h / 2 - ih * 0.46;
     const sxx = iw / bb.w, syy = ih / bb.h;
     const tf = `translate(${(ix - bb.x * sxx).toFixed(3)} ${(iy - bb.y * syy).toFixed(3)}) scale(${sxx.toFixed(4)} ${syy.toFixed(4)})`;
