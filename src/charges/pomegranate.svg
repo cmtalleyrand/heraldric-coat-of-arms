@@ -1,16 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" stroke="#000" viewBox="50 50 200 200">
   <metadata author="heraldric-coat-of-arms" license="https://creativecommons.org/publicdomain/zero/1.0"/>
-  <g id="pomegranate" stroke-width="1.4">
-    <path fill="#1f7a3f" d="M100 78c-3-10-9-17-9-17 6 1 9 6 9 6s3-5 9-6c0 0-6 7-9 17z"/>
-    <path fill="#1f7a3f" d="M70 96c-14-6-22 6-13 16 2-9 9-11 14-9z"/>
-    <path fill="#1f7a3f" d="M130 96c14-6 22 6 13 16-2-9-9-11-14-9z"/>
-    <path fill="#caa15a" d="M100 80c-22 0-36 18-36 42 0 26 18 46 36 54 18-8 36-28 36-54 0-24-14-42-36-42z"/>
-    <path fill="none" d="M76 104c16 10 32 10 48 0"/>
-    <g fill="#cf2030" stroke="none">
-      <circle cx="86" cy="118" r="5"/><circle cx="100" cy="114" r="5"/><circle cx="114" cy="118" r="5"/>
-      <circle cx="80" cy="132" r="5"/><circle cx="94" cy="130" r="5"/><circle cx="108" cy="130" r="5"/><circle cx="120" cy="132" r="5"/>
-      <circle cx="86" cy="146" r="5"/><circle cx="100" cy="144" r="5"/><circle cx="114" cy="146" r="5"/>
-      <circle cx="94" cy="158" r="5"/><circle cx="106" cy="158" r="5"/>
+  <g id="pomegranate" stroke-width="1.4" stroke-linejoin="round">
+    <!-- slipped stem + leaves (vert) -->
+    <path fill="#1a7a3e" d="M100 84 C70 96 60 70 70 58 C86 60 96 70 100 84 Z"/>
+    <path fill="#1a7a3e" d="M100 84 C130 96 140 70 130 58 C114 60 104 70 100 84 Z"/>
+    <!-- calyx crown -->
+    <path fill="#caa15a" d="M88 78 l4 -12 l4 9 l4 -12 l4 12 l4 -9 l4 12 z"/>
+    <!-- fruit body -->
+    <ellipse cx="100" cy="124" rx="36" ry="40" fill="#caa15a"/>
+    <!-- opening showing seeds -->
+    <path fill="#7a1f12" stroke-width="1.1" d="M100 92 C84 104 84 150 100 162 C116 150 116 104 100 92 Z"/>
+    <g fill="#d4202c" stroke="none">
+      <circle cx="100" cy="106" r="4"/><circle cx="93" cy="116" r="4"/><circle cx="107" cy="116" r="4"/>
+      <circle cx="100" cy="126" r="4"/><circle cx="93" cy="136" r="4"/><circle cx="107" cy="136" r="4"/>
+      <circle cx="100" cy="146" r="4"/>
     </g>
   </g>
 </svg>

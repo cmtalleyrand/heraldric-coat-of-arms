@@ -2,13 +2,13 @@
 // Tincture palette (colours, metals, stains) ported from Armoria (MIT).
 // `metal` marks the metals/light tinctures for the rule-of-tincture check.
 const tinctures = {
-  or: { label: 'Or', hex: '#ffcf3d', metal: true, kind: 'metal' },
-  argent: { label: 'Argent', hex: '#f6f4ee', metal: true, kind: 'metal' },
-  gules: { label: 'Gules', hex: '#cf2030', metal: false, kind: 'colour' },
-  azure: { label: 'Azure', hex: '#2b5fb3', metal: false, kind: 'colour' },
-  sable: { label: 'Sable', hex: '#2b2b2b', metal: false, kind: 'colour' },
-  vert: { label: 'Vert', hex: '#208a4e', metal: false, kind: 'colour' },
-  purpure: { label: 'Purpure', hex: '#6d2d6b', metal: false, kind: 'colour' },
+  or: { label: 'Or', hex: '#f4c518', metal: true, kind: 'metal' },
+  argent: { label: 'Argent', hex: '#f4f2e8', metal: true, kind: 'metal' },
+  gules: { label: 'Gules', hex: '#d4202c', metal: false, kind: 'colour' },
+  azure: { label: 'Azure', hex: '#1b4f9c', metal: false, kind: 'colour' },
+  sable: { label: 'Sable', hex: '#1c1c1c', metal: false, kind: 'colour' },
+  vert: { label: 'Vert', hex: '#1a7a3e', metal: false, kind: 'colour' },
+  purpure: { label: 'Purpure', hex: '#6a2c70', metal: false, kind: 'colour' },
   murrey: { label: 'Murrey', hex: '#85185b', metal: false, kind: 'stain' },
   sanguine: { label: 'Sanguine', hex: '#9d2933', metal: false, kind: 'stain' },
   tenne: { label: 'Tenné', hex: '#cc7f19', metal: false, kind: 'stain' },

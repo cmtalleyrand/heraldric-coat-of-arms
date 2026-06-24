@@ -183,9 +183,10 @@ function placeCharge(name, tinctures, stroke, opts, target, sx, sy, ctx) {
   const flip = opts && opts.sinister ? -1 : 1;
   const tx = target.x - acx * sx * flip, ty = target.y - acy * sy;
   const sw = (0.8 / ((Math.abs(sx) + sy) / 2)).toFixed(2);
+  const rot = (opts && opts.angle) ? `rotate(${opts.angle} ${target.x.toFixed(2)} ${target.y.toFixed(2)}) ` : '';
   return `<g fill="${t}" stroke="${strk}" stroke-width="${sw}" ` +
     `style="--secondary:${t2};--tertiary:${t3};--stroke:${strk}">` +
-    `<use href="#ch_${name}" xlink:href="#ch_${name}" transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${(sx * flip).toFixed(4)} ${sy.toFixed(4)})"/></g>`;
+    `<use href="#ch_${name}" xlink:href="#ch_${name}" transform="${rot}translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${(sx * flip).toFixed(4)} ${sy.toFixed(4)})"/></g>`;
 }
 
 // Scale a charge UNIFORMLY (no stretch — stretching mangles tall charges like
@@ -217,11 +218,12 @@ function renderCharges(charge, b, ctx) {
   // dexter-chief→sinister-base diagonal, drawn upright.
   if (charge.along === 'bend') {
     const n = charge.count || 3;
+    const angle = Math.atan2(b.h, b.w) * 180 / Math.PI;   // align with the bend
     const { sx, sy } = chargeScale(charge.charge, { w: b.w * 0.3, h: b.h * 0.3 }, charge.size || 1);
     let out = '';
     for (let k = 1; k <= n; k++) {
       const f = k / (n + 1);
-      out += placeCharge(charge.charge, tinctures, charge.stroke, charge,
+      out += placeCharge(charge.charge, tinctures, charge.stroke, { angle },
         { x: b.x + b.w * f, y: b.y + b.h * f }, sx, sy, ctx);
     }
     return out;

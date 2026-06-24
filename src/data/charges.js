@@ -1,8 +1,6 @@
 (function(){ // MODULE-IIFE: isolate top-level declarations across <script> tags
 // Curated charge library manifest. SVG sources live in src/charges/<name>.svg.
-// Vendored from Armoria (https://github.com/Azgaar/Armoria): simple charges CC0,
-// complex WappenWiki charges CC BY-NC(-SA) 3.0 — non-commercial use, see NOTICE.
-// bbox = measured drawn extent of the artwork (in the 50..250 charge space).
+// Vendored from Armoria: simple charges CC0, complex WappenWiki charges CC BY-NC(-SA) 3.0.
 const charges = {
   "lionRampant": {
     "label": "Lion Rampant",
@@ -572,10 +570,10 @@ const charges = {
     "author": "heraldric-coat-of-arms",
     "source": "",
     "bbox": {
-      "x": 52.4,
-      "y": 59.6,
-      "w": 95.2,
-      "h": 117.6
+      "x": 62.8,
+      "y": 57.2,
+      "w": 74.4,
+      "h": 108.0
     }
   },
   "escarbuncle": {
@@ -586,10 +584,10 @@ const charges = {
     "author": "heraldric-coat-of-arms",
     "source": "",
     "bbox": {
-      "x": 50,
-      "y": 50,
-      "w": 108,
-      "h": 108
+      "x": 50.0,
+      "y": 50.0,
+      "w": 105.6,
+      "h": 105.6
     }
   },
   "pike": {
@@ -608,7 +606,7 @@ const charges = {
   }
 };
 
-const categories = {"beast":"Beasts","cross":"Crosses","nature":"Nature","building":"Buildings","object":"Objects","celestial":"Celestial","geometric":"Geometric"};
+const categories = {"beast": "Beasts", "cross": "Crosses", "nature": "Nature", "building": "Buildings", "object": "Objects", "celestial": "Celestial", "geometric": "Geometric"};
 
 const api = { charges, categories };
 if (typeof module !== "undefined" && module.exports) module.exports = api;
