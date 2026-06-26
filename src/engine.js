@@ -18,7 +18,7 @@ const GRID = {
   g: [-50, 50], h: [0, 50], i: [50, 50]
 };
 
-const CHARGE_PAD = 0.94;     // fraction of a cell's charge-area a charge fills
+const CHARGE_PAD = 1.02;     // fraction of a cell's charge-area a charge fills
 const STRETCH_CAP = 1.45;    // max non-uniform stretch
 const OUTLINE = '#5a4626';   // thin shield outline (soft brown, like the references)
 const OUTLINE_W = 1.1;
@@ -148,10 +148,11 @@ function renderOrdinary(o, b) {
       return o.ordinary === 'saltire' ? bar(45) + bar(-45) : bar(45);
     }
     case 'bordure': {
-      const bw = Math.min(b.w, b.h) * 0.16;
-      let out = `<path d="${rectPath(b)}" fill="none" stroke="${t}" stroke-width="${bw}"/>`;
+      const bw = Math.min(b.w, b.h) * 0.13;
+      const inner = `M${b.x + bw} ${b.y + bw} H${b.x + b.w - bw} V${b.y + b.h - bw} H${b.x + bw} Z`;
+      let out = `<path fill-rule="evenodd" d="${rectPath(b)} ${inner}" fill="${t}"/>`;
       if (o.compony && o.t2) {
-        const seg = bw * 1.2;
+        const seg = bw * 1.3;
         out += `<path d="${rectPath(b)}" fill="none" stroke="${hex(o.t2)}" stroke-width="${bw}" stroke-dasharray="${seg} ${seg}"/>`;
       }
       return out;
@@ -182,7 +183,7 @@ function placeCharge(name, tinctures, stroke, opts, target, sx, sy, ctx) {
   const acx = bb.x + bb.w / 2, acy = bb.y + bb.h / 2;   // artwork centre
   const flip = opts && opts.sinister ? -1 : 1;
   const tx = target.x - acx * sx * flip, ty = target.y - acy * sy;
-  const sw = (0.8 / ((Math.abs(sx) + sy) / 2)).toFixed(2);
+  const sw = Math.min(1.2, 0.8 / ((Math.abs(sx) + sy) / 2)).toFixed(2);
   const rot = (opts && opts.angle) ? `rotate(${opts.angle} ${target.x.toFixed(2)} ${target.y.toFixed(2)}) ` : '';
   return `<g fill="${t}" stroke="${strk}" stroke-width="${sw}" ` +
     `style="--secondary:${t2};--tertiary:${t3};--stroke:${strk}">` +
